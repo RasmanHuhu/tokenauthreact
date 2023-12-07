@@ -1,7 +1,15 @@
+import { useState, useEffect } from "react";
+import facade from "../apiFacade";
+
 function LoggedIn() {
     const [dataFromServer, setDataFromServer] = useState("Loading...")
     
-    useEffect(() => { /*TODO*/}, [])
+    useEffect(() => {
+      facade.fetchData().then(
+        (data) => {
+          setDataFromServer(JSON.stringify(data))
+        })
+      }, [])
   
     return (
       <div>
