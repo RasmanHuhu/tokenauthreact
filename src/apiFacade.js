@@ -1,5 +1,4 @@
-const URL = "ADD URL TO YOU SERVER";
-
+const URL = "http://localhost:7070/api/v1/";
 function handleHttpErrors(res) {
  if (!res.ok) {
    return Promise.reject({ status: res.status, fullError: res.json() })
@@ -13,27 +12,31 @@ function apiFacade() {
  object when you do)*/
  
  const setToken = (token) => {
-  localStorage.setItem('jwtToken', token)
-}
-const getToken = () => {
-return localStorage.getItem('jwtToken')
-}
-const loggedIn = () => {
-const loggedIn = getToken() != null;
-return loggedIn;
-}
-const logout = () => {
-localStorage.removeItem("jwtToken");
-}
+    localStorage.setItem('jwtToken', token)
+  }
+  const getToken = () => {
+    return localStorage.getItem('jwtToken')
+  }
+  const loggedIn = () => {
+    const loggedIn = getToken() != null;
+    return loggedIn;
+  }
+    const logout = () => {
+    localStorage.removeItem("jwtToken");
+  }
 
 const login = (user, password) => {
   const options = makeOptions("POST", true,{username: user, password: password });
-  return fetch(URL + "/api/login", options)
+  return fetch(URL + "auth/login", options)
       .then(handleHttpErrors)
       .then(res => {setToken(res.token) })
-
-const fetchData = () => {/*TODO */  }
-const makeOptions= (method,addToken,body) =>{
+}
+  const fetchData = () => {
+    const options = makeOptions("GET", true);
+    return fetch(URL+"hotels/", options)
+      .then(handleHttpErrors)
+  }
+  const makeOptions = (method,addToken,body) =>{
    var opts = {
      method: method,
      headers: {
@@ -42,7 +45,7 @@ const makeOptions= (method,addToken,body) =>{
      }
    }
    if (addToken && loggedIn()) {
-     opts.headers["Authentication"] = `Baerer ${getToken()}`;
+     opts.headers["Authorization"] = `Baerer ${getToken()}`;
    }
    if (body) {
      opts.body = JSON.stringify(body);
@@ -59,6 +62,6 @@ const makeOptions= (method,addToken,body) =>{
      fetchData
  }
 }
-}
+
 const facade = apiFacade();
 export default facade;
